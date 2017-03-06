@@ -42,13 +42,14 @@
 ## Step 2 实现Filter
 
 1. `mkdir -p src/main/java/com/example/filter`
+
 2. 创建源文件 src/main/java/com/example/filter/Reverse.java, 具体代码参见[https://github.com/childe/hangout-filter-reverse/blob/4a01443b5fc4c18260c370dd6d7ba68447409cc2/src/main/java/com/example/filter/Reverse.java](https://github.com/childe/hangout-filter-reverse/blob/4a01443b5fc4c18260c370dd6d7ba68447409cc2/src/main/java/com/example/filter/Reverse.java)
 
-### 代码说明
+3. 代码说明
 
-- 构造函数一般只需要一句 `super(config);` , 其它准备工作放在prepare方法中完成. super(config)里面完成了些Step3中讲的事情
-- prepare方法. 处理每个Filter自己的额外的一些准备工作. 在这个简单的Filter中, 就是把配置文件中的fields提取出来放在自己的成员变量中
-- 主要实现函数 `Map filter(final Map event)` .这个函数接收一个参数(Map event), 是上游传递来的事件. 返回值需要返回一个Map对象回去. 可以返回原对象, 也可以创建一个新的对象. 在这个例子中, 我们直接修改原对象返回就可以了.
+    - 构造函数一般只需要一句 `super(config);` , 其它准备工作放在prepare方法中完成. super(config)里面完成了些Step3中讲的事情
+    - prepare方法. 处理每个Filter自己的额外的一些准备工作. 在这个简单的Filter中, 就是把配置文件中的fields提取出来放在自己的成员变量中
+    - 主要实现函数 `Map filter(final Map event)` .这个函数接收一个参数(Map event), 是上游传递来的事件. 返回值需要返回一个Map对象回去. 可以返回原对象, 也可以创建一个新的对象. 在这个例子中, 我们直接修改原对象返回就可以了.
 
 ## Step 3 也许你需要一些善后处理
 
