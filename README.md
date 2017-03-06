@@ -63,7 +63,6 @@
     inputs:
         - Stdin:
             codec: plain
-            meter_name: stdin
 
     filters:
         - Add:
@@ -75,16 +74,78 @@
                 - value
 
     outputs:
-        - Stdout:
-            meter_name: stdout1
-        - Stdout:
-            if:
-                - '<#if message=="hello">true</#if>'
-            meter_name: stdout2
+        - Stdout: {}
+
     ```
 
 4. 跑起来看看效果吧
 
-## Step 3 也许你需要一些善后处理
+## Step 4 也许你需要一些善后处理
+
+刚刚在我们的示例代码中,如果配置的字段在消息中并没有,我们直接跳过. 现在我们有个新的需求:如果全部字段都没有出现,那么就需要给消息打个标签.
+
+在filter函数中, 我们需要做一点小的改动, 定义一个变量success来判断消息是不是处理失败(全部字段都不存在). 在return event之前,添加一句 `postProcess(event, success);`
+
+一共添加了三行代码, 改动见 [https://github.com/childe/hangout-filter-reverse/commit/0e98ab47005d90d8a177090c5d4c78c40fab7d3a](https://github.com/childe/hangout-filter-reverse/commit/0e98ab47005d90d8a177090c5d4c78c40fab7d3a)
+
+拿这个配置来测试一下吧.
+```
+inputs:
+    - Stdin:
+        codec: plain
+
+filters:
+    - Add:
+        if:
+            - '<#if message=="hello">true</#if>'
+        fields:
+            value: liujia
+    - com.example.filter.Reverse:
+        fields:
+            - value
+        tag_on_failure: reverseFail
+
+outputs:
+    - Stdout: {}
+```
+
+*tag_on_failure* 这个是固定字段, 如果配置了这个字段,在postProcess里面就会添加reverseFail到tags字段中.
+
+类似的还有add_fields,以及remove_fields.  如果成功的话, 就会添加配置的字段, 以及删除某些字段, 配置如下
+
+```
+inputs:
+    - Stdin:
+        codec: plain
+
+filters:
+    - Add:
+        if:
+            - '<#if message=="hello">true</#if>'
+        fields:
+            value: liujia
+    - com.example.filter.Reverse:
+        fields:
+            - value
+        tag_on_failure: reverseFail
+        add_fields:
+            a: 1
+            b: "world"
+        remove_fields: ['message']
+
+outputs:
+    - Stdout: {}
+```
+
+效果如下:
+
+```
+abcd
+{@timestamp=2017-03-06T17:38:04.247+08:00, message=abcd, tags=[reverseFail]}
+hello
+{a=1, b=world, @timestamp=2017-03-06T17:38:06.847+08:00, value=aijuil}
+```
 
 ## 单元测试
+
+不加单元测试心里会虚.
