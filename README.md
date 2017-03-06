@@ -149,3 +149,8 @@ hello
 ## 单元测试
 
 不加单元测试心里会虚.
+
+加上单元测试的的代码见项目 [https://github.com/childe/hangout-filter-reverse](https://github.com/childe/hangout-filter-reverse)
+记得pom.xml里面加上需要的依赖
+
+我只是写了一个简单的单元测试, 真正开发新的插件,还是需要完善它.
