@@ -28,15 +28,17 @@ public class Reverse extends BaseFilter {
      */
     @Override
     protected Map filter(final Map event) {
-
+        boolean success = false;
         for (String field : this.fields) {
             if (!event.containsKey(field)) {
                 continue;
             }
+            success = true;
             String oldValue = event.get(field).toString();
             String newValue = new StringBuilder(oldValue).reverse().toString();
             event.put(field, newValue);
         }
+        postProcess(event, success);
         return event;
     }
 }
