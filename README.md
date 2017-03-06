@@ -51,6 +51,40 @@
     - prepare方法. 处理每个Filter自己的额外的一些准备工作. 在这个简单的Filter中, 就是把配置文件中的fields提取出来放在自己的成员变量中
     - 主要实现函数 `Map filter(final Map event)` .这个函数接收一个参数(Map event), 是上游传递来的事件. 返回值需要返回一个Map对象回去. 可以返回原对象, 也可以创建一个新的对象. 在这个例子中, 我们直接修改原对象返回就可以了.
 
+## Step 3 打包使用
+
+1. 打包 `mvn package`
+
+2. 将打包好的jar包(hangout-filters-reverse-0.1.jar)放到hangout的modules文件夹下
+
+3. 配置文件中使用刚写好的Reverse Filter
+
+    ```
+    inputs:
+        - Stdin:
+            codec: plain
+            meter_name: stdin
+
+    filters:
+        - Add:
+            fields:
+                value: liujia
+        - com.example.filter.Reverse:
+            fields:
+                - message
+                - value
+
+    outputs:
+        - Stdout:
+            meter_name: stdout1
+        - Stdout:
+            if:
+                - '<#if message=="hello">true</#if>'
+            meter_name: stdout2
+    ```
+
+4. 跑起来看看效果吧
+
 ## Step 3 也许你需要一些善后处理
 
 ## 单元测试
