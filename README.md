@@ -42,7 +42,7 @@
 ## Step 2 实现Filter
 
 1. `mkdir -p src/main/java/com/example/filter`
-2. 创建源文件 src/main/java/com/example/filter/Reverse.java, 具体代码参见TODO
+2. 创建源文件 src/main/java/com/example/filter/Reverse.java, 具体代码参见[https://github.com/childe/hangout-filter-reverse/blob/4a01443b5fc4c18260c370dd6d7ba68447409cc2/src/main/java/com/example/filter/Reverse.java](https://github.com/childe/hangout-filter-reverse/blob/4a01443b5fc4c18260c370dd6d7ba68447409cc2/src/main/java/com/example/filter/Reverse.java)
 
 ### 代码说明
 
