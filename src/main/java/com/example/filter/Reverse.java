@@ -2,11 +2,17 @@ package com.example.filter;
 
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 import com.ctrip.ops.sysdev.baseplugin.BaseFilter;
+import com.ctrip.ops.sysdev.fieldSetter.FieldSetter;
+import com.ctrip.ops.sysdev.render.TemplateRender;
+import scala.Tuple2;
 
 public class Reverse extends BaseFilter {
+    private static final Logger logger = Logger.getLogger(Reverse.class.getName());
 
-    private List<String> fields;
+    private List<Tuple2> fields;
 
     public Reverse(Map config) {
         // 构造函数 , 一般不需要额外的代码. 其它准备工作放在prepare方法中完成.
@@ -18,7 +24,16 @@ public class Reverse extends BaseFilter {
     @Override
     protected void prepare() {
         // 对于这个Filter来说, 只需要配置有哪些字段需要做翻转. 我们定义一个私有成员fields, 保存这些需要翻转的字段.
-        this.fields = (List<String>) config.get("fields");
+        this.fields = new ArrayList<>();
+        for (String field : (List<String>) config.get("fields")) {
+            TemplateRender templateRender = null;
+            try {
+                templateRender = TemplateRender.getRender(field, false);
+            } catch (Exception e) {
+                logger.info("could not build template render from " + field);
+            }
+            this.fields.add(new Tuple2(FieldSetter.getFieldSetter(field), templateRender));
+        }
     }
 
     /*
@@ -29,15 +44,22 @@ public class Reverse extends BaseFilter {
     @Override
     protected Map filter(final Map event) {
         boolean success = false;
-        for (String field : this.fields) {
-            if (!event.containsKey(field)) {
+        for (Tuple2 t2 : this.fields) {
+            FieldSetter fieldSetter = (FieldSetter) t2._1();
+            TemplateRender templateRender = (TemplateRender) t2._2();
+
+
+            Object oldValue = templateRender.render(event);
+            if (oldValue == null) {
                 continue;
             }
+
+            String newValue = new StringBuilder(oldValue.toString()).reverse().toString();
+            fieldSetter.setField(event, newValue);
+
             success = true;
-            String oldValue = event.get(field).toString();
-            String newValue = new StringBuilder(oldValue).reverse().toString();
-            event.put(field, newValue);
         }
+
         postProcess(event, success);
         return event;
     }
