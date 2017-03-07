@@ -30,7 +30,8 @@ public class Reverse extends BaseFilter {
             try {
                 templateRender = TemplateRender.getRender(field, false);
             } catch (Exception e) {
-                logger.info("could not build template render from " + field);
+                logger.fatal("could not build template render from " + field);
+                System.exit(1);
             }
             this.fields.add(new Tuple2(FieldSetter.getFieldSetter(field), templateRender));
         }
